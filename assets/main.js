@@ -1,5 +1,11 @@
 ﻿(() => {
   'use strict';
+  const navigationEntry = performance.getEntriesByType?.('navigation')[0];
+  const reloaded = navigationEntry?.type === 'reload' || performance.navigation?.type === 1;
+  if (reloaded && !location.hash) {
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    addEventListener('pageshow', () => requestAnimationFrame(() => scrollTo(0, 0)), { once: true });
+  }
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const revealItems = document.querySelectorAll('.reveal');
   if (reducedMotion || !('IntersectionObserver' in window)) revealItems.forEach(item => item.classList.add('visible'));
