@@ -144,6 +144,58 @@
     updateProductDots();
   }
 
+  const countElements = document.querySelectorAll('.count-up[data-count]');
+  if (countElements.length) {
+    const animateCount = element => {
+      const target = Number(element.dataset.count || 0);
+      if (reducedMotion || !target) {
+        element.textContent = String(target);
+        return;
+      }
+      const startedAt = performance.now();
+      const duration = 950;
+      const tick = now => {
+        const progress = Math.min(1, (now - startedAt) / duration);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        element.textContent = String(Math.round(target * eased));
+        if (progress < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
+    const countObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        animateCount(entry.target);
+        countObserver.unobserve(entry.target);
+      });
+    }, { threshold: .6 });
+    countElements.forEach(element => countObserver.observe(element));
+  }
+
+  const precisePointer = matchMedia('(hover:hover) and (pointer:fine)').matches;
+  if (precisePointer && !reducedMotion) {
+    document.querySelectorAll('.btn').forEach(button => {
+      button.classList.add('magnetic');
+      button.addEventListener('pointermove', event => {
+        const box = button.getBoundingClientRect();
+        const x = (event.clientX - box.left - box.width / 2) * .12;
+        const y = (event.clientY - box.top - box.height / 2) * .16;
+        button.style.transform = `translate3d(${x}px,${y}px,0)`;
+      });
+      button.addEventListener('pointerleave', () => { button.style.transform = ''; });
+    });
+    document.querySelectorAll('.gallery img').forEach(image => {
+      image.classList.add('motion-tilt');
+      image.addEventListener('pointermove', event => {
+        const box = image.getBoundingClientRect();
+        const rotateY = ((event.clientX - box.left) / box.width - .5) * 4;
+        const rotateX = (.5 - (event.clientY - box.top) / box.height) * 4;
+        image.style.transform = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.018)`;
+      });
+      image.addEventListener('pointerleave', () => { image.style.transform = ''; });
+    });
+  }
+
   const quoteForm = document.querySelector('#quote-form');
   if (quoteForm) {
     const attachment = quoteForm.querySelector('#attachment');
