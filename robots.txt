@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://voodoobeach.github.io/MisterMagnesik/sitemap.xml
