@@ -4,7 +4,19 @@
   const reloaded = navigationEntry?.type === 'reload' || performance.navigation?.type === 1;
   if (reloaded && !location.hash) {
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-    addEventListener('pageshow', () => requestAnimationFrame(() => scrollTo(0, 0)), { once: true });
+    const resetScrollPosition = () => {
+      scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      if (document.body) document.body.scrollTop = 0;
+    };
+    resetScrollPosition();
+    addEventListener('DOMContentLoaded', resetScrollPosition, { once: true });
+    addEventListener('pageshow', () => requestAnimationFrame(resetScrollPosition), { once: true });
+    addEventListener('load', () => {
+      resetScrollPosition();
+      setTimeout(resetScrollPosition, 50);
+      setTimeout(resetScrollPosition, 250);
+    }, { once: true });
   }
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const revealItems = document.querySelectorAll('.reveal');
