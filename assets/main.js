@@ -90,12 +90,51 @@
     const review = reviewForm.elements['review-text'].value.trim();
     openEmail(reviewForm, 'Nowa opinia klienta â€” Mister Magnesik', `Autor: ${name}\n\nTreĹ›Ä‡ opinii:\n${review}\n\nProszÄ™ o weryfikacjÄ™ przed publikacjÄ….`);
   });
+  const calculator = document.querySelector('[data-calculator]');
+  if (calculator) {
+    const quantityInput = calculator.querySelector('#calculator-quantity');
+    const quantityOutput = calculator.querySelector('#calculator-quantity-output');
+    const unitOutput = calculator.querySelector('#calculator-unit-price');
+    const totalOutput = calculator.querySelector('#calculator-total');
+    const quoteButton = calculator.querySelector('#calculator-quote');
+    const money = new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' });
+    const updateCalculator = () => {
+      const quantity = Number(quantityInput.value);
+      const unitPrice = quantity >= 500 ? 2.50 : 3.10;
+      quantityOutput.value = String(quantity);
+      quantityOutput.textContent = String(quantity);
+      unitOutput.textContent = money.format(unitPrice);
+      totalOutput.textContent = money.format(quantity * unitPrice);
+    };
+    quantityInput.addEventListener('input', updateCalculator, { passive: true });
+    quoteButton.addEventListener('click', () => {
+      const form = document.querySelector('#quote-form');
+      if (!form) return;
+      form.querySelector('#product').value = 'Magnesy-wizytĂłwki';
+      form.querySelector('#format').value = '90 Ă— 55 mm';
+      form.querySelector('#quantity').value = quantityInput.value;
+    });
+    updateCalculator();
+  }
+
   const quoteForm = document.querySelector('#quote-form');
-  if (quoteForm) quoteForm.addEventListener('submit', event => {
-    event.preventDefault();
-    const data = new FormData(quoteForm);
-    const body = [`ImiÄ™ i nazwisko: ${data.get('name') || ''}`, `Telefon: ${data.get('phone') || ''}`, `E-mail: ${data.get('email') || ''}`, `Produkt: ${data.get('product') || ''}`, `Format: ${data.get('format') || ''}`, `Liczba sztuk: ${data.get('quantity') || ''}`, '', 'Opis zamĂłwienia:', data.get('message') || ''].join('\n');
-    openEmail(quoteForm, 'Zapytanie ze strony Mister Magnesik', body);
-  });
+  if (quoteForm) {
+    const attachment = quoteForm.querySelector('#attachment');
+    const status = quoteForm.querySelector('.form-status');
+    attachment?.addEventListener('change', () => {
+      const file = attachment.files?.[0];
+      const tooLarge = Boolean(file && file.size > 10 * 1024 * 1024);
+      attachment.setCustomValidity(tooLarge ? 'ZaĹ‚Ä…cznik moĹĽe mieÄ‡ maksymalnie 10 MB.' : '');
+      if (status) status.textContent = tooLarge ? 'Wybrany plik jest wiÄ™kszy niĹĽ 10 MB.' : file ? `Wybrano plik: ${file.name}` : '';
+    });
+    quoteForm.addEventListener('submit', event => {
+      if (!quoteForm.checkValidity()) {
+        event.preventDefault();
+        quoteForm.reportValidity();
+        return;
+      }
+      if (status) status.textContent = 'WysyĹ‚amy zapytanie. Za chwilÄ™ zobaczysz potwierdzenie.';
+    });
+  }
 })();
 

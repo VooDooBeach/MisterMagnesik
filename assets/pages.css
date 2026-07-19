@@ -9,3 +9,4 @@ section{padding:84px 0}.soft,.related{background:var(--soft)}h2{font-size:clamp(
 @media(max-width:380px){.nav{gap:10px}.brand{width:165px}.menu-toggle{padding:0 10px}h1{font-size:39px}.eyebrow{letter-spacing:.15em}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 @media(prefers-color-scheme:dark){html,body{background:#fff!important;color:#0b0b0b!important}button{color-scheme:light;background:#fff;color:#0b0b0b}}
+.success-page{display:flex;min-height:100vh;align-items:center;background:#fff}.success-page .container{max-width:820px}.success-page h1{font-size:clamp(64px,10vw,120px)}
