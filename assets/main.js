@@ -196,6 +196,17 @@
     });
   }
 
+  const faqList = document.querySelector('#faq-list');
+  const faqToggle = document.querySelector('.faq-toggle');
+  if (faqList && faqToggle) {
+    faqToggle.addEventListener('click', () => {
+      const expanded = faqList.classList.toggle('expanded');
+      faqToggle.setAttribute('aria-expanded', String(expanded));
+      faqToggle.textContent = expanded ? 'Pokaż mniej pytań' : 'Pokaż więcej pytań';
+      if (!expanded) faqList.querySelectorAll('.faq-more[open]').forEach(item => item.removeAttribute('open'));
+    });
+  }
+
   const quoteForm = document.querySelector('#quote-form');
   if (quoteForm) {
     const attachment = quoteForm.querySelector('#attachment');
