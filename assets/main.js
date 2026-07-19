@@ -80,7 +80,7 @@
 
   const openEmail = (form, subject, body) => {
     const status = form.querySelector('[role="status"]');
-    if (status) status.textContent = 'Otwieramy aplikacjÄ™ pocztowÄ… z przygotowanÄ… wiadomoĹ›ciÄ….';
+    if (status) status.textContent = 'Otwieramy aplikację pocztową z przygotowaną wiadomością.';
     location.href = `mailto:kontakt@mistermagnesik.pl?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
   const reviewForm = document.querySelector('#review-form');
@@ -88,7 +88,7 @@
     event.preventDefault();
     const name = reviewForm.elements['review-name'].value.trim();
     const review = reviewForm.elements['review-text'].value.trim();
-    openEmail(reviewForm, 'Nowa opinia klienta â€” Mister Magnesik', `Autor: ${name}\n\nTreĹ›Ä‡ opinii:\n${review}\n\nProszÄ™ o weryfikacjÄ™ przed publikacjÄ….`);
+    openEmail(reviewForm, 'Nowa opinia klienta — Mister Magnesik', `Autor: ${name}\n\nTreść opinii:\n${review}\n\nProszę o weryfikację przed publikacją.`);
   });
   const calculator = document.querySelector('[data-calculator]');
   if (calculator) {
@@ -110,8 +110,8 @@
     quoteButton.addEventListener('click', () => {
       const form = document.querySelector('#quote-form');
       if (!form) return;
-      form.querySelector('#product').value = 'Magnesy-wizytĂłwki';
-      form.querySelector('#format').value = '90 Ă— 55 mm';
+      form.querySelector('#product').value = 'Magnesy-wizytówki';
+      form.querySelector('#format').value = '90 × 55 mm';
       form.querySelector('#quantity').value = quantityInput.value;
     });
     updateCalculator();
@@ -124,8 +124,8 @@
     attachment?.addEventListener('change', () => {
       const file = attachment.files?.[0];
       const tooLarge = Boolean(file && file.size > 10 * 1024 * 1024);
-      attachment.setCustomValidity(tooLarge ? 'ZaĹ‚Ä…cznik moĹĽe mieÄ‡ maksymalnie 10 MB.' : '');
-      if (status) status.textContent = tooLarge ? 'Wybrany plik jest wiÄ™kszy niĹĽ 10 MB.' : file ? `Wybrano plik: ${file.name}` : '';
+      attachment.setCustomValidity(tooLarge ? 'Załącznik może mieć maksymalnie 10 MB.' : '');
+      if (status) status.textContent = tooLarge ? 'Wybrany plik jest większy niż 10 MB.' : file ? `Wybrano plik: ${file.name}` : '';
     });
     quoteForm.addEventListener('submit', event => {
       if (!quoteForm.checkValidity()) {
@@ -133,7 +133,7 @@
         quoteForm.reportValidity();
         return;
       }
-      if (status) status.textContent = 'WysyĹ‚amy zapytanie. Za chwilÄ™ zobaczysz potwierdzenie.';
+      if (status) status.textContent = 'Wysyłamy zapytanie. Za chwilę zobaczysz potwierdzenie.';
     });
   }
 })();
