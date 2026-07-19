@@ -40,6 +40,7 @@ section{padding:100px 0}.section-head{max-width:800px;margin-bottom:48px}.sectio
 .contact{display:grid;grid-template-columns:.9fr 1.1fr;gap:30px}.contact-card{background:var(--black);color:#fff;padding:44px}.contact-card h2{font-size:48px;line-height:1;margin-top:0}.contact-card a{display:block;margin:16px 0;color:#ddd}.contact-card a:hover{text-decoration:underline}.form{border:1px solid var(--line);padding:34px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.form label{font-size:13px;font-weight:700}.form input,.form select,.form textarea{width:100%;padding:14px;border:1px solid #ccc;margin-top:7px;font:inherit}.form textarea{min-height:140px;resize:vertical}.form-note{margin:14px 0 0;color:#666;font-size:12px}.full{grid-column:1/-1}
 footer{padding:35px 0;border-top:1px solid var(--line);font-size:13px;color:#666}.footer{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 .float{position:fixed;right:20px;bottom:20px;z-index:25;display:flex;flex-direction:column;gap:10px}.float a{background:var(--black);color:#fff;padding:14px 18px;font-weight:700;box-shadow:0 8px 25px rgba(0,0,0,.18)}
+.float a{transition:background-color .25s ease,color .25s ease,border-color .25s ease,box-shadow .25s ease;border:1px solid var(--black)}.float.on-dark a{background:#fff!important;background-image:linear-gradient(#fff,#fff)!important;color:#0b0b0b!important;border-color:#fff;box-shadow:0 8px 25px rgba(255,255,255,.14)}
 .reveal{opacity:0;transform:translateY(25px);transition:.65s}.reveal.visible{opacity:1;transform:none}
 @media(max-width:900px){.nav{position:relative}.menu-toggle{display:inline-flex;align-items:center;justify-content:center}.nav>.btn{display:none}.links{display:none;position:absolute;top:82px;left:0;right:0;flex-direction:column;gap:0;padding:8px 20px 18px;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 12px 24px rgba(0,0,0,.08)}.links.open{display:flex}.links a{padding:12px 0;border-bottom:1px solid var(--line)}.hero-grid,.two,.contact{grid-template-columns:1fr}.products{grid-template-columns:1fr 1fr}.benefits,.steps{grid-template-columns:1fr 1fr}.gallery{grid-template-columns:1fr 1fr;grid-auto-rows:220px}.gallery img:first-child{grid-row:auto;grid-column:span 2}.trust{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){body{padding-bottom:64px}.container{width:min(100% - 24px,1180px)}.nav{height:72px}.links{top:72px}.brand{width:205px}.hero{padding-top:45px}.hero h1{font-size:50px}.products,.benefits,.steps,.faq,.form-grid{grid-template-columns:1fr}.gallery{grid-template-columns:1fr}.gallery img:first-child{grid-column:auto}.gallery-preview{grid-template-columns:1fr;grid-auto-rows:240px}.panel,.contact-card,.form{padding:28px}.float{left:0;right:0;bottom:0;display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#fff;border-top:1px solid var(--line);z-index:40}.float a{text-align:center;padding:14px 8px;font-size:13px;box-shadow:none}.contact-card h2{font-size:40px}}
@@ -82,6 +83,20 @@ const menuButton=document.querySelector('.menu-toggle');
 const menu=document.querySelector('#main-menu');
 menuButton.addEventListener('click',()=>{const open=menu.classList.toggle('open');menuButton.setAttribute('aria-expanded',String(open));});
 menu.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>{menu.classList.remove('open');menuButton.setAttribute('aria-expanded','false');}));
+const floatingActions=document.querySelector('.float');
+let contrastFrame;
+function updateFloatingContrast(){
+  contrastFrame=undefined;
+  const rect=floatingActions.getBoundingClientRect();
+  const x=Math.min(innerWidth-1,Math.max(0,rect.left+rect.width/2));
+  const y=Math.min(innerHeight-1,Math.max(0,rect.top+rect.height/2));
+  const overDark=document.elementsFromPoint(x,y).some(element=>element!==floatingActions&&!element.closest('.float')&&element.closest('.black,.panel.dark,.contact-card'));
+  floatingActions.classList.toggle('on-dark',overDark);
+}
+function scheduleFloatingContrast(){if(!contrastFrame)contrastFrame=requestAnimationFrame(updateFloatingContrast)}
+addEventListener('scroll',scheduleFloatingContrast,{passive:true});
+addEventListener('resize',scheduleFloatingContrast);
+updateFloatingContrast();
 document.querySelector('#quote-form').addEventListener('submit',event=>{
   event.preventDefault();
   const data=new FormData(event.currentTarget);
