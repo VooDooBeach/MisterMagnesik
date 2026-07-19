@@ -117,6 +117,33 @@
     updateCalculator();
   }
 
+  const productSlider = document.querySelector('.products');
+  const productDots = [...document.querySelectorAll('.product-dots i')];
+  if (productSlider && productDots.length) {
+    const productCards = [...productSlider.querySelectorAll('.product')];
+    let sliderFrame = 0;
+    const updateProductDots = () => {
+      sliderFrame = 0;
+      const sliderCenter = productSlider.scrollLeft + productSlider.clientWidth / 2;
+      let activeIndex = 0;
+      let closestDistance = Infinity;
+      productCards.forEach((card, index) => {
+        const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+        const distance = Math.abs(cardCenter - sliderCenter);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          activeIndex = index;
+        }
+      });
+      productDots.forEach((dot, index) => dot.classList.toggle('active', index === activeIndex));
+    };
+    productSlider.addEventListener('scroll', () => {
+      if (!sliderFrame) sliderFrame = requestAnimationFrame(updateProductDots);
+    }, { passive: true });
+    window.addEventListener('resize', updateProductDots, { passive: true });
+    updateProductDots();
+  }
+
   const quoteForm = document.querySelector('#quote-form');
   if (quoteForm) {
     const attachment = quoteForm.querySelector('#attachment');
@@ -137,4 +164,3 @@
     });
   }
 })();
-
