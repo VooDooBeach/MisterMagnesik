@@ -153,7 +153,7 @@
         return;
       }
       const startedAt = performance.now();
-      const duration = 950;
+      const duration = 2100;
       const tick = now => {
         const progress = Math.min(1, (now - startedAt) / duration);
         const eased = 1 - Math.pow(1 - progress, 3);
