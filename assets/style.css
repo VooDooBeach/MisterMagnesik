@@ -102,11 +102,11 @@ footer{padding:35px 0;border-top:1px solid var(--line);font-size:13px;color:#666
 }
 
 /* Slow, clean emphasis for product prices. */
-.product .price{transform-origin:left center;animation:price-breathe 3.6s ease-in-out infinite}
+.product .price{display:inline-block;transform-origin:left center;will-change:transform,opacity;animation:price-breathe 3s ease-in-out infinite!important}
 .product:nth-child(2) .price{animation-delay:.18s}.product:nth-child(3) .price{animation-delay:.36s}.product:nth-child(4) .price{animation-delay:.54s}
 @keyframes price-breathe{
   0%,100%{transform:scale(1);opacity:1}
-  50%{transform:scale(1.045);opacity:.82}
+  50%{transform:scale(1.075);opacity:.68}
 }
 @media(min-width:761px){
   .hero::before,.hero::after{content:none!important;display:none!important;visibility:hidden!important;animation:none!important;box-shadow:none!important}
