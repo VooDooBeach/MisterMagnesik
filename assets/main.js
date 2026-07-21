@@ -224,13 +224,23 @@
       attachment.setCustomValidity(tooLarge ? 'Załącznik może mieć maksymalnie 10 MB.' : '');
       if (status) status.textContent = tooLarge ? 'Wybrany plik jest większy niż 10 MB.' : file ? `Wybrano plik: ${file.name}` : '';
     });
-    quoteForm.addEventListener('submit', event => {
+    quoteForm.addEventListener('submit', async event => {
       if (!quoteForm.checkValidity()) {
         event.preventDefault();
         quoteForm.reportValidity();
         return;
       }
+      event.preventDefault();
       if (status) status.textContent = 'Wysyłamy zapytanie. Za chwilę zobaczysz potwierdzenie.';
+      const submitButton = quoteForm.querySelector('button[type="submit"]');
+      if (submitButton) submitButton.disabled = true;
+      try {
+        await fetch(quoteForm.action, { method: 'POST', mode: 'no-cors', body: new FormData(quoteForm) });
+        window.location.href = 'https://mistermagnesik.pl/dziekujemy.html';
+      } catch (error) {
+        if (status) status.textContent = 'Nie udało się wysłać zapytania. Spróbuj ponownie lub napisz na kontakt@mistermagnesik.pl.';
+        if (submitButton) submitButton.disabled = false;
+      }
     });
   }
 })();
