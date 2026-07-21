@@ -216,8 +216,22 @@
 
   const quoteForm = document.querySelector('#quote-form');
   if (quoteForm) {
+    const formsparkUrl = 'https://submit-form.com/form_v1_LoyKvQkMotNg5m6ybkP8wHkU';
+    const uploadcarePublicKey = '2d12ff7d8dd4b613b877';
     const attachment = quoteForm.querySelector('#attachment');
     const status = quoteForm.querySelector('.form-status');
+    const uploadFile = async file => {
+      if (!file || !file.size) return null;
+      const upload = new FormData();
+      upload.append('UPLOADCARE_PUB_KEY', uploadcarePublicKey);
+      upload.append('UPLOADCARE_STORE', '1');
+      upload.append('file', file, file.name);
+      const response = await fetch('https://upload.uploadcare.com/base/', { method: 'POST', body: upload });
+      if (!response.ok) throw new Error(`Uploadcare HTTP ${response.status}`);
+      const result = await response.json();
+      if (!result.file) throw new Error('Uploadcare nie zwrócił identyfikatora pliku.');
+      return { name: file.name, url: `https://ucarecdn.com/${result.file}/` };
+    };
     attachment?.addEventListener('change', () => {
       const file = attachment.files?.[0];
       const tooLarge = Boolean(file && file.size > 10 * 1024 * 1024);
@@ -235,9 +249,31 @@
       const submitButton = quoteForm.querySelector('button[type="submit"]');
       if (submitButton) submitButton.disabled = true;
       try {
-        await fetch(quoteForm.action, { method: 'POST', mode: 'no-cors', body: new FormData(quoteForm) });
+        const data = new FormData(quoteForm);
+        const file = data.get('attachment');
+        const uploaded = file instanceof File && file.size ? await uploadFile(file) : null;
+        const payload = {};
+        data.forEach((value, key) => {
+          if (!(value instanceof File) && !key.startsWith('_')) payload[key] = value;
+        });
+        payload['Źródło'] = 'Formularz wyceny na stronie głównej';
+        if (uploaded) {
+          payload['Nazwa załącznika'] = uploaded.name;
+          payload['Załącznik — otwórz lub pobierz'] = uploaded.url;
+        }
+        payload._email = {
+          subject: 'Nowe zapytanie ze strony Mister Magnesik',
+          from: payload['Imię i nazwisko'] || 'Klient Mister Magnesik'
+        };
+        const response = await fetch(formsparkUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!response.ok) throw new Error(`Formspark HTTP ${response.status}`);
         window.location.href = 'https://mistermagnesik.pl/dziekujemy.html';
       } catch (error) {
+        console.error('Nie udało się wysłać formularza:', error);
         if (status) status.textContent = 'Nie udało się wysłać zapytania. Spróbuj ponownie lub napisz na kontakt@mistermagnesik.pl.';
         if (submitButton) submitButton.disabled = false;
       }

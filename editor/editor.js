@@ -345,6 +345,19 @@
     return new File([blob], filename, { type: blob.type || "image/png" });
   }
 
+  async function uploadOrderFile(file) {
+    if (!(file instanceof File) || !file.size) return null;
+    const upload = new FormData();
+    upload.append("UPLOADCARE_PUB_KEY", integration.uploadcarePublicKey);
+    upload.append("UPLOADCARE_STORE", "1");
+    upload.append("file", file, file.name);
+    const response = await fetch("https://upload.uploadcare.com/base/", { method: "POST", body: upload });
+    if (!response.ok) throw new Error(`Uploadcare HTTP ${response.status}`);
+    const result = await response.json();
+    if (!result.file) throw new Error("Uploadcare nie zwrócił identyfikatora pliku.");
+    return { name: file.name, url: `https://ucarecdn.com/${result.file}/` };
+  }
+
   function exportProject(kind) {
     const quality = qualityData();
     if (kind === "print" && quality.level === "bad" && !confirm("Zdjęcie ma niską rozdzielczość i może być nieostre w druku. Pobrać mimo to?")) return null;
@@ -356,6 +369,8 @@
 
   async function submitOrder(event) {
     event.preventDefault();
+    const submitButton = event.currentTarget.querySelector('button[type="submit"]');
+    if (submitButton) submitButton.disabled = true;
     const form = new FormData(event.currentTarget);
     const quality = qualityData();
     const customer = Object.fromEntries([...form.entries()].filter(([, value]) => !(value instanceof File)));
@@ -368,26 +383,50 @@
     if (projectFile.size + extraSize > 10 * 1024 * 1024) {
       setStatus("Łączny rozmiar plików przekracza 10 MB. Projekt został pobrany — dodaj mniejszy załącznik lub prześlij pliki osobno.");
       downloadDataUrl(png, `${projectId}-druk.png`);
+      if (submitButton) submitButton.disabled = false;
       return;
     }
-    if (integration.mode === "formsubmit" && integration.formSubmitUrl) {
+    if (integration.mode === "formspark" && integration.formsparkUrl && integration.uploadcarePublicKey) {
       try {
-        form.append("projectId", projectId);
-        form.append("Produkt", `${cfg.products[shapeKey].label} ${currentSize.label}`);
-        form.append("Jakość projektu", quality.label);
-        form.append("Projekt z edytora", projectFile);
-        await fetch(integration.formSubmitUrl, {
+        setStatus("Wysyłamy projekt i dane zamówienia…");
+        const projectUpload = await uploadOrderFile(projectFile);
+        const extraUpload = extraFile instanceof File && extraFile.size ? await uploadOrderFile(extraFile) : null;
+        const payload = {
+          "Źródło": "Edytor magnesów",
+          "Identyfikator projektu": projectId,
+          "Data projektu": order.createdAt,
+          "Imię i nazwisko": customer.name || "",
+          "E-mail": customer.email || "",
+          email: customer.email || "",
+          "Telefon": customer.phone || "",
+          "Liczba sztuk": customer.quantity || "",
+          "Uwagi": customer.notes || "",
+          "Produkt": `${cfg.products[shapeKey].label} ${currentSize.label}`,
+          "Jakość projektu": quality.label,
+          "Projekt z edytora — otwórz lub pobierz": projectUpload.url,
+          "Nazwa pliku projektu": projectUpload.name,
+          _email: {
+            subject: `Nowy projekt z edytora — ${projectId}`,
+            from: customer.name || "Klient Mister Magnesik"
+          }
+        };
+        if (extraUpload) {
+          payload["Dodatkowy załącznik — otwórz lub pobierz"] = extraUpload.url;
+          payload["Nazwa dodatkowego załącznika"] = extraUpload.name;
+        }
+        const response = await fetch(integration.formsparkUrl, {
           method: "POST",
-          mode: "no-cors",
-          redirect: "manual",
-          body: form
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify(payload)
         });
+        if (!response.ok) throw new Error(`Formspark HTTP ${response.status}`);
         setStatus("Projekt i dane zamówienia zostały wysłane. Dziękujemy!");
         event.currentTarget.reset();
+        if (submitButton) submitButton.disabled = false;
       } catch (error) {
-        setStatus("Nie udało się wysłać wiadomości. Projekt został pobrany — możesz przesłać go przez formularz na stronie głównej.");
-        downloadDataUrl(png, `${projectId}-druk.png`);
-        downloadBlob(JSON.stringify(order, null, 2), `${projectId}-zamowienie.json`, "application/json");
+        console.error("Nie udało się wysłać projektu:", error);
+        setStatus("Nie udało się wysłać projektu. Dane pozostały w formularzu — spróbuj ponownie lub napisz na kontakt@mistermagnesik.pl.");
+        if (submitButton) submitButton.disabled = false;
       }
     } else if (integration.mode === "endpoint" && integration.endpointUrl) {
       try {
