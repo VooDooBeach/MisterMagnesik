@@ -30,12 +30,18 @@
 
   const menuButton = document.querySelector('.menu-toggle');
   const menu = document.querySelector('#main-menu');
-  const closeMenu = () => { if (menu && menuButton) { menu.classList.remove('open'); menuButton.setAttribute('aria-expanded', 'false'); } };
+  const closeMenu = () => { if (menu && menuButton) { menu.classList.remove('open'); menuButton.setAttribute('aria-expanded', 'false'); menuButton.blur(); } };
   if (menuButton && menu) {
     menuButton.addEventListener('click', () => { const open = menu.classList.toggle('open'); menuButton.setAttribute('aria-expanded', String(open)); });
     menu.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
     document.addEventListener('keydown', event => { if (event.key === 'Escape') { closeMenu(); menuButton.focus(); } });
   }
+
+  document.querySelectorAll('a[href="#kontakt"]').forEach(link => link.addEventListener('click', () => {
+    closeMenu();
+    link.style.transform = '';
+    requestAnimationFrame(() => document.querySelector('nav')?.classList.remove('menu-open'));
+  }));
 
   const sectionLinks = menu ? [...menu.querySelectorAll('a[href^="#"]')] : [];
   if ('IntersectionObserver' in window && sectionLinks.length) {
@@ -175,6 +181,7 @@
   const precisePointer = matchMedia('(hover:hover) and (pointer:fine)').matches;
   if (precisePointer && !reducedMotion) {
     document.querySelectorAll('.btn').forEach(button => {
+      if (button.closest('nav,.float')) return;
       button.classList.add('magnetic');
       button.addEventListener('pointermove', event => {
         const box = button.getBoundingClientRect();
