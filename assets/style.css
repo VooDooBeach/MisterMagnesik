@@ -29,6 +29,7 @@ footer{padding:35px 0;border-top:1px solid var(--line);font-size:13px;color:#666
 @media(max-width:240px){.brand{width:120px}.menu-toggle{font-size:12px;padding:0 6px}.float{grid-template-columns:1fr}.hero h1,.section-head h2{font-size:31px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.reveal{opacity:1;transform:none;transition:none}.gallery img,.hero-media img{transition:none!important}.gallery img:hover,.hero-media:hover img{transform:none!important}}
 @media(prefers-color-scheme:dark){html,body{background:#fff!important;color:#0b0b0b!important}input,select,textarea,button{color-scheme:light;background-color:#fff;color:#0b0b0b}}
+.gallery-preview-single{grid-template-columns:1fr;grid-auto-rows:auto}.gallery-preview-single img,.gallery-preview-single img:first-child{width:100%;height:auto;aspect-ratio:8/5;object-fit:cover;grid-column:auto;grid-row:auto}
 
 /* Keep native form controls consistent with the site's typography. */
 .form input,.form select,.form textarea,.form button,
