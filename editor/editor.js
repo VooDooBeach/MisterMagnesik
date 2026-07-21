@@ -340,6 +340,11 @@
   function downloadDataUrl(dataUrl, filename) { const link = document.createElement("a"); link.href = dataUrl; link.download = filename; document.body.appendChild(link); link.click(); link.remove(); }
   function downloadBlob(content, filename, type) { const url = URL.createObjectURL(new Blob([content], { type })); const link = document.createElement("a"); link.href = url; link.download = filename; link.click(); setTimeout(() => URL.revokeObjectURL(url), 500); }
 
+  async function dataUrlToFile(dataUrl, filename) {
+    const blob = await fetch(dataUrl).then((response) => response.blob());
+    return new File([blob], filename, { type: blob.type || "image/png" });
+  }
+
   function exportProject(kind) {
     const quality = qualityData();
     if (kind === "print" && quality.level === "bad" && !confirm("Zdjęcie ma niską rozdzielczość i może być nieostre w druku. Pobrać mimo to?")) return null;
@@ -353,10 +358,35 @@
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const quality = qualityData();
-    const order = { projectId, createdAt: new Date().toISOString(), customer: Object.fromEntries(form.entries()), product: { shape: cfg.products[shapeKey].label, size: currentSize, bleedMm: cfg.bleedMm, dpi: cfg.dpi }, quality };
+    const customer = Object.fromEntries([...form.entries()].filter(([, value]) => !(value instanceof File)));
+    const order = { projectId, createdAt: new Date().toISOString(), customer, product: { shape: cfg.products[shapeKey].label, size: currentSize, bleedMm: cfg.bleedMm, dpi: cfg.dpi }, quality };
     setStatus("Przygotowujemy projekt…");
     const png = renderDataUrl("print");
-    if (integration.mode === "endpoint" && integration.endpointUrl) {
+    const projectFile = await dataUrlToFile(png, `${projectId}-druk.png`);
+    const extraFile = form.get("attachment");
+    const extraSize = extraFile instanceof File ? extraFile.size : 0;
+    if (projectFile.size + extraSize > 10 * 1024 * 1024) {
+      setStatus("Łączny rozmiar plików przekracza 10 MB. Projekt został pobrany — dodaj mniejszy załącznik lub prześlij pliki osobno.");
+      downloadDataUrl(png, `${projectId}-druk.png`);
+      return;
+    }
+    if (integration.mode === "formsubmit" && integration.formSubmitUrl) {
+      try {
+        form.append("projectId", projectId);
+        form.append("Produkt", `${cfg.products[shapeKey].label} ${currentSize.label}`);
+        form.append("Jakość projektu", quality.label);
+        form.append("Projekt z edytora", projectFile);
+        const response = await fetch(integration.formSubmitUrl, { method: "POST", headers: { Accept: "application/json" }, body: form });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok || result.success === false || result.success === "false") throw new Error(result.message || `HTTP ${response.status}`);
+        setStatus("Projekt i dane zamówienia zostały wysłane. Dziękujemy!");
+        event.currentTarget.reset();
+      } catch (error) {
+        setStatus("Nie udało się wysłać wiadomości. Projekt został pobrany — możesz przesłać go przez formularz na stronie głównej.");
+        downloadDataUrl(png, `${projectId}-druk.png`);
+        downloadBlob(JSON.stringify(order, null, 2), `${projectId}-zamowienie.json`, "application/json");
+      }
+    } else if (integration.mode === "endpoint" && integration.endpointUrl) {
       try {
         const response = await fetch(integration.endpointUrl, { method: "POST", headers: { "Content-Type": "application/json", ...(integration.headers || {}) }, body: JSON.stringify({ ...order, projectPngDataUrl: png }) });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
