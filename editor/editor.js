@@ -376,9 +376,11 @@
         form.append("Produkt", `${cfg.products[shapeKey].label} ${currentSize.label}`);
         form.append("Jakość projektu", quality.label);
         form.append("Projekt z edytora", projectFile);
-        const response = await fetch(integration.formSubmitUrl, { method: "POST", headers: { Accept: "application/json" }, body: form });
-        const result = await response.json().catch(() => ({}));
-        if (!response.ok || result.success === false || result.success === "false") throw new Error(result.message || `HTTP ${response.status}`);
+        const response = await fetch(integration.formSubmitUrl, { method: "POST", mode: "no-cors", body: form });
+        if (response.type !== "opaque") {
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok || result.success === false || result.success === "false") throw new Error(result.message || `HTTP ${response.status}`);
+        }
         setStatus("Projekt i dane zamówienia zostały wysłane. Dziękujemy!");
         event.currentTarget.reset();
       } catch (error) {
