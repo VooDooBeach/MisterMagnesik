@@ -21,7 +21,7 @@ W `editor/config.js` można zmienić:
 - `products` — kształty i rozmiary;
 - `fonts`, `frames`, `decorations` — dostępne opcje edytora.
 
-Edytor udostępnia wyłącznie prostokąty i kwadraty z ostrymi narożnikami. Format `95 × 65 mm — 8 szt. z A4` jest przeznaczony między innymi na podziękowania: mieści się osiem razy na arkuszu A4 w układzie 2 × 4 i pozostawia zapas potrzebny przy cięciu.
+Edytor udostępnia wyłącznie prostokąty i kwadraty z ostrymi narożnikami. Formaty `95 × 65 mm` i `65 × 95 mm` są poziomą oraz pionową wersją formatu przeznaczonego między innymi na podziękowania. Na arkuszu A4 mieści się osiem sztuk w układzie 2 × 4, z zapasem potrzebnym przy cięciu.
 
 ## Zamówienia bez backendu
 

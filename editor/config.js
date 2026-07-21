@@ -10,7 +10,8 @@ window.MAGNET_EDITOR_CONFIG = {
       label: "Prostokąt",
       sizes: [
         { id: "90x55", label: "90 × 55 mm", widthMm: 90, heightMm: 55 },
-        { id: "a4-8", label: "95 × 65 mm — 8 szt. z A4", widthMm: 95, heightMm: 65 },
+        { id: "95x65", label: "95 × 65 mm", widthMm: 95, heightMm: 65 },
+        { id: "65x95", label: "65 × 95 mm", widthMm: 65, heightMm: 95 },
         { id: "100x145", label: "100 × 145 mm", widthMm: 100, heightMm: 145 },
         { id: "a5", label: "A5 — 148 × 210 mm", widthMm: 148, heightMm: 210 },
         { id: "a4", label: "A4 — 210 × 297 mm", widthMm: 210, heightMm: 297 }
