@@ -63,7 +63,7 @@ Po skopiowaniu plików do repozytorium:
 1. wykonaj commit w GitHub Desktop;
 2. wybierz `Push origin`;
 3. poczekaj na publikację GitHub Pages;
-4. otwórz `https://voodoobeach.github.io/MisterMagnesik/editor/`;
+4. otwórz `https://mistermagnesik.pl/editor/`;
 5. sprawdź dodawanie zdjęcia, tekstu, zapis po odświeżeniu i eksport PNG.
 
 Ścieżki są względne, więc edytor działa również w podfolderze repozytorium GitHub Pages.
