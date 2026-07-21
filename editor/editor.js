@@ -369,9 +369,10 @@
 
   async function submitOrder(event) {
     event.preventDefault();
-    const submitButton = event.currentTarget.querySelector('button[type="submit"]');
+    const orderForm = event.currentTarget;
+    const submitButton = orderForm.querySelector('button[type="submit"]');
     if (submitButton) submitButton.disabled = true;
-    const form = new FormData(event.currentTarget);
+    const form = new FormData(orderForm);
     const quality = qualityData();
     const customer = Object.fromEntries([...form.entries()].filter(([, value]) => !(value instanceof File)));
     const order = { projectId, createdAt: new Date().toISOString(), customer, product: { shape: cfg.products[shapeKey].label, size: currentSize, bleedMm: cfg.bleedMm, dpi: cfg.dpi }, quality };
@@ -421,7 +422,7 @@
         });
         if (!response.ok) throw new Error(`Formspark HTTP ${response.status}`);
         setStatus("Projekt i dane zamówienia zostały wysłane. Dziękujemy!");
-        event.currentTarget.reset();
+        orderForm.reset();
         if (submitButton) submitButton.disabled = false;
       } catch (error) {
         console.error("Nie udało się wysłać projektu:", error);
