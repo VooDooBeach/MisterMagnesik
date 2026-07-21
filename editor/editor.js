@@ -372,17 +372,47 @@
     }
     if (integration.mode === "formsubmit" && integration.formSubmitUrl) {
       try {
-        form.append("projectId", projectId);
-        form.append("Produkt", `${cfg.products[shapeKey].label} ${currentSize.label}`);
-        form.append("Jakość projektu", quality.label);
-        form.append("Projekt z edytora", projectFile);
-        const response = await fetch(integration.formSubmitUrl, { method: "POST", mode: "no-cors", body: form });
-        if (response.type !== "opaque") {
-          const result = await response.json().catch(() => ({}));
-          if (!response.ok || result.success === false || result.success === "false") throw new Error(result.message || `HTTP ${response.status}`);
-        }
-        setStatus("Projekt i dane zamówienia zostały wysłane. Dziękujemy!");
-        event.currentTarget.reset();
+        const formElement = event.currentTarget;
+        const transfer = new DataTransfer();
+        transfer.items.add(projectFile);
+        const projectInput = document.createElement("input");
+        projectInput.type = "file";
+        projectInput.name = "Projekt z edytora";
+        projectInput.hidden = true;
+        projectInput.files = transfer.files;
+        formElement.appendChild(projectInput);
+        const metadataInputs = [
+          ["projectId", projectId],
+          ["Produkt", `${cfg.products[shapeKey].label} ${currentSize.label}`],
+          ["Jakość projektu", quality.label]
+        ].map(([name, value]) => {
+          const input = document.createElement("input");
+          input.type = "hidden";
+          input.name = name;
+          input.value = value;
+          formElement.appendChild(input);
+          return input;
+        });
+
+        const targetName = `formsubmit-${projectId}`;
+        const targetFrame = document.createElement("iframe");
+        targetFrame.name = targetName;
+        targetFrame.hidden = true;
+        document.body.appendChild(targetFrame);
+
+        formElement.action = integration.formSubmitUrl;
+        formElement.method = "POST";
+        formElement.enctype = "multipart/form-data";
+        formElement.target = targetName;
+        HTMLFormElement.prototype.submit.call(formElement);
+
+        setTimeout(() => {
+          setStatus("Projekt i dane zamówienia zostały wysłane. Dziękujemy!");
+          formElement.reset();
+          projectInput.remove();
+          metadataInputs.forEach((input) => input.remove());
+          setTimeout(() => targetFrame.remove(), 30000);
+        }, 1200);
       } catch (error) {
         setStatus("Nie udało się wysłać wiadomości. Projekt został pobrany — możesz przesłać go przez formularz na stronie głównej.");
         downloadDataUrl(png, `${projectId}-druk.png`);
