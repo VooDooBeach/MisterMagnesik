@@ -355,7 +355,7 @@
     if (!response.ok) throw new Error(`Uploadcare HTTP ${response.status}`);
     const result = await response.json();
     if (!result.file) throw new Error("Uploadcare nie zwrócił identyfikatora pliku.");
-    return { name: file.name, url: `https://ucarecdn.com/${result.file}/` };
+    return { name: file.name, url: `${integration.uploadcareCdnBase}/${result.file}/` };
   }
 
   function exportProject(kind) {
@@ -397,7 +397,7 @@
           "Data projektu": order.createdAt,
           "Imię i nazwisko": customer.name || "",
           "E-mail": customer.email || "",
-          email: customer.email || "",
+          _replyto: customer.email || "",
           "Telefon": customer.phone || "",
           "Liczba sztuk": customer.quantity || "",
           "Uwagi": customer.notes || "",

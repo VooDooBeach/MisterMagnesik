@@ -218,6 +218,7 @@
   if (quoteForm) {
     const formsparkUrl = 'https://submit-form.com/4rtrH5OBY';
     const uploadcarePublicKey = '2d12ff7d8dd4b613b877';
+    const uploadcareCdnBase = 'https://5ai76xinrm.ucarecd.net';
     const attachment = quoteForm.querySelector('#attachment');
     const status = quoteForm.querySelector('.form-status');
     const uploadFile = async file => {
@@ -230,7 +231,7 @@
       if (!response.ok) throw new Error(`Uploadcare HTTP ${response.status}`);
       const result = await response.json();
       if (!result.file) throw new Error('Uploadcare nie zwrócił identyfikatora pliku.');
-      return { name: file.name, url: `https://ucarecdn.com/${result.file}/` };
+      return { name: file.name, url: `${uploadcareCdnBase}/${result.file}/` };
     };
     attachment?.addEventListener('change', () => {
       const file = attachment.files?.[0];
