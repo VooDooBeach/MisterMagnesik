@@ -21,7 +21,7 @@ W `editor/config.js` można zmienić:
 - `products` — kształty i rozmiary;
 - `fonts`, `frames`, `decorations` — dostępne opcje edytora.
 
-Rozmiary koła są oznaczone jako demonstracyjne. Należy je usunąć lub potwierdzić przed uruchomieniem sprzedaży, jeśli produkcja obejmuje wyłącznie cięcie gilotynowe.
+Edytor udostępnia wyłącznie prostokąty i kwadraty z ostrymi narożnikami. Format `95 × 65 mm — 8 szt. z A4` jest przeznaczony między innymi na podziękowania: mieści się osiem razy na arkuszu A4 w układzie 2 × 4 i pozostawia zapas potrzebny przy cięciu.
 
 ## Zamówienia bez backendu
 

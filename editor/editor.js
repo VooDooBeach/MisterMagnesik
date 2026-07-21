@@ -43,7 +43,7 @@
     if (!sizes.some((size) => size.id === sizeId)) sizeId = sizes[0].id;
     $("size-select").value = sizeId;
     currentSize = sizes.find((size) => size.id === sizeId) || sizes[0];
-    $("production-note").hidden = shapeKey !== "circle";
+    $("production-note").hidden = true;
   }
 
   function displayDimensions() {
@@ -76,10 +76,7 @@
   }
 
   function applyCanvasClip() {
-    if (shapeKey === "circle") {
-      const radius = Math.min(canvas.getWidth(), canvas.getHeight()) / 2;
-      canvas.clipPath = new fabric.Circle({ radius, left: canvas.getWidth() / 2, top: canvas.getHeight() / 2, originX: "center", originY: "center", absolutePositioned: true });
-    } else canvas.clipPath = null;
+    canvas.clipPath = null;
   }
 
   function guideStyle(color, dash) {
@@ -89,7 +86,6 @@
   function zoneObject(inset, style) {
     const w = canvas.getWidth() - inset * 2;
     const h = canvas.getHeight() - inset * 2;
-    if (shapeKey === "circle") return new fabric.Circle({ ...style, radius: Math.min(w, h) / 2, left: canvas.getWidth() / 2, top: canvas.getHeight() / 2, originX: "center", originY: "center" });
     return new fabric.Rect({ ...style, left: inset, top: inset, width: w, height: h, originX: "left", originY: "top" });
   }
 
@@ -228,7 +224,7 @@
     const width = +$("frame-width").value;
     const inset = width + 5;
     const opts = { fill: "transparent", stroke: $("frame-color").value, strokeWidth: width, selectable: false, evented: false, dataRole: "frame", strokeDashArray: type === "dashed" ? [12, 8] : null };
-    frameObject = shapeKey === "circle" ? new fabric.Circle({ ...opts, radius: Math.min(canvas.width, canvas.height) / 2 - inset, left: canvas.width / 2, top: canvas.height / 2, originX: "center", originY: "center" }) : new fabric.Rect({ ...opts, left: inset, top: inset, width: canvas.width - inset * 2, height: canvas.height - inset * 2 });
+    frameObject = new fabric.Rect({ ...opts, left: inset, top: inset, width: canvas.width - inset * 2, height: canvas.height - inset * 2 });
     canvas.add(frameObject);
     if (type === "double") {
       frameObject.set({ strokeWidth: Math.max(2, width / 2), shadow: new fabric.Shadow({ color: $("frame-color").value, blur: 0, offsetX: width * 1.6, offsetY: width * 1.6 }) });
@@ -268,7 +264,8 @@
     restoring = true;
     const parsed = typeof state === "string" ? JSON.parse(state) : state;
     projectId = parsed.projectId || projectId;
-    shapeKey = parsed.shapeKey || "rectangle"; sizeId = parsed.sizeId || cfg.products[shapeKey].sizes[0].id;
+    shapeKey = cfg.products[parsed.shapeKey] ? parsed.shapeKey : "rectangle";
+    sizeId = parsed.sizeId || cfg.products[shapeKey].sizes[0].id;
     $("shape-select").value = shapeKey; updateSizeOptions(); $("size-select").value = sizeId;
     const dims = displayDimensions(); canvas.setDimensions(dims); applyCanvasClip();
     canvas.loadFromJSON(parsed.canvas, () => {
