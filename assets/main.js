@@ -216,7 +216,7 @@
 
   const quoteForm = document.querySelector('#quote-form');
   if (quoteForm) {
-    const formsparkUrl = 'https://submit-form.com/form_v1_LoyKvQkMotNg5m6ybkP8wHkU';
+    const formsparkUrl = 'https://submit-form.com/4rtrH5OBY';
     const uploadcarePublicKey = '2d12ff7d8dd4b613b877';
     const attachment = quoteForm.querySelector('#attachment');
     const status = quoteForm.querySelector('.form-status');
