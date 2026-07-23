@@ -138,3 +138,58 @@ footer{padding:35px 0;border-top:1px solid var(--line);font-size:13px;color:#666
 .home-blog-card small{margin-top:auto;text-transform:uppercase;letter-spacing:.12em;color:#aaa}
 .home-blog-card strong{font-size:23px;line-height:1.08;margin-top:13px}
 @media(max-width:800px){.home-blog-grid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px}.home-blog-card{min-width:82%;scroll-snap-align:start}}
+
+
+/* MOBILE-SWIPE-SECTIONS */
+@media(max-width:560px){
+  #oferta .two,
+  #o-nas .detail-grid,
+  #szczegoly .detail-grid,
+  .black .benefits,
+  #jak .steps{
+    display:flex;
+    gap:12px;
+    overflow-x:auto;
+    overflow-y:hidden;
+    scroll-snap-type:x mandatory;
+    scroll-padding-inline:2px;
+    overscroll-behavior-inline:contain;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    padding:2px 2px 12px;
+  }
+  #oferta .two::-webkit-scrollbar,
+  #o-nas .detail-grid::-webkit-scrollbar,
+  #szczegoly .detail-grid::-webkit-scrollbar,
+  .black .benefits::-webkit-scrollbar,
+  #jak .steps::-webkit-scrollbar{display:none}
+
+  #oferta .panel,
+  #o-nas .detail-card,
+  #szczegoly .detail-card,
+  .black .benefit,
+  #jak .step{
+    flex:0 0 82%;
+    min-width:0;
+    scroll-snap-align:start;
+    scroll-snap-stop:always;
+  }
+  #oferta .panel{padding:23px;min-height:auto}
+  #oferta .panel h3{font-size:28px;margin:8px 0}
+  #oferta .panel p,
+  #oferta .panel li{font-size:14px}
+  #oferta .panel .btn{width:100%;padding-inline:12px}
+
+  #o-nas .detail-card,
+  #szczegoly .detail-card{padding:22px}
+  #o-nas .detail-card h3,
+  #szczegoly .detail-card h3{font-size:23px}
+
+  .black .benefit{padding:22px;min-height:205px}
+  .black .benefit span{font-size:12px}
+  .black .benefit h3{font-size:25px}
+
+  #jak .step{padding:22px;min-height:190px}
+  #jak .step-num{font-size:34px}
+  #jak .step h3{font-size:23px}
+}
