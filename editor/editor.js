@@ -8,6 +8,8 @@
   let shapeKey = "rectangle";
   let sizeId = "90x55";
   let currentSize = cfg.products[shapeKey].sizes[0];
+  let customWidthMm = 100;
+  let customHeightMm = 100;
   let photoObject = null;
   let frameObject = null;
   let guideObjects = [];
@@ -34,6 +36,8 @@
     $("frame-select").innerHTML = cfg.frames.map((frame) => `<option value="${frame.id}">${frame.label}</option>`).join("");
     $("decorations").innerHTML = cfg.decorations.map((icon) => `<button class="decoration-btn" type="button" data-decoration="${icon}" aria-label="Dodaj ozdobę ${icon}">${icon}</button>`).join("");
     $("max-file-label").textContent = `${cfg.maxUploadMb} MB`;
+    const productFields = $("shape-select").closest(".field-grid");
+    productFields.insertAdjacentHTML("afterend", `<div class="custom-size-fields" id="custom-size-fields" hidden><div class="field-grid"><label>Szerokość (cm)<input id="custom-width" type="number" min="5" max="29.7" step="0.5" value="10" inputmode="decimal"></label><label>Wysokość (cm)<input id="custom-height" type="number" min="5" max="29.7" step="0.5" value="10" inputmode="decimal"></label></div><p class="custom-size-hint">Od 5 × 5 cm do maksymalnego pola A4. Format niestandardowy wyceniamy indywidualnie.</p><p class="warning" id="custom-size-warning" hidden>Wymiar musi zmieścić się na arkuszu A4: maks. 21 × 29,7 cm lub 29,7 × 21 cm.</p></div>`);
     updateSizeOptions();
   }
 
@@ -42,8 +46,27 @@
     $("size-select").innerHTML = sizes.map((size) => `<option value="${size.id}">${size.label}</option>`).join("");
     if (!sizes.some((size) => size.id === sizeId)) sizeId = sizes[0].id;
     $("size-select").value = sizeId;
-    currentSize = sizes.find((size) => size.id === sizeId) || sizes[0];
+    const selectedSize = sizes.find((size) => size.id === sizeId) || sizes[0];
+    currentSize = selectedSize.custom
+      ? { ...selectedSize, label: `Własny wymiar (${customWidthMm} × ${customHeightMm} mm)`, widthMm: customWidthMm, heightMm: customHeightMm }
+      : selectedSize;
+    const customFields = $("custom-size-fields");
+    if (customFields) customFields.hidden = !selectedSize.custom;
     $("production-note").hidden = true;
+  }
+
+  function applyCustomSize() {
+    const widthMm = Math.round(Number($("custom-width").value.replace?.(",", ".") || $("custom-width").value) * 10);
+    const heightMm = Math.round(Number($("custom-height").value.replace?.(",", ".") || $("custom-height").value) * 10);
+    const fitsA4 = widthMm >= 50 && heightMm >= 50 && ((widthMm <= 210 && heightMm <= 297) || (widthMm <= 297 && heightMm <= 210));
+    $("custom-size-warning").hidden = fitsA4;
+    if (!fitsA4) return;
+    customWidthMm = widthMm;
+    customHeightMm = heightMm;
+    updateSizeOptions();
+    resizeCanvas(true);
+    commitHistory();
+    checkImageQuality();
   }
 
   function displayDimensions() {
@@ -572,6 +595,10 @@
     }
     $("shape-select").addEventListener("change", (e) => { shapeKey = e.target.value; sizeId = cfg.products[shapeKey].sizes[0].id; updateSizeOptions(); resizeCanvas(true); commitHistory(); checkImageQuality(); });
     $("size-select").addEventListener("change", (e) => { sizeId = e.target.value; updateSizeOptions(); resizeCanvas(true); commitHistory(); checkImageQuality(); });
+    ["custom-width", "custom-height"].forEach((id) => {
+      $(id).addEventListener("change", applyCustomSize);
+      $(id).addEventListener("blur", applyCustomSize);
+    });
     $("image-input").addEventListener("change", (e) => prepareUpload(e.target.files[0]));
     [$("upload-zone"), $("canvas-wrap")].forEach((zone) => {
       ["dragenter", "dragover"].forEach((name) => zone.addEventListener(name, (e) => { e.preventDefault(); zone.classList.add("dragging"); }));

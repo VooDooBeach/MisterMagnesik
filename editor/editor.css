@@ -4,6 +4,9 @@
 @media(max-width:680px){.container{width:min(100% - 22px,1480px)}.editor-nav-inner{min-height:66px}.brand{width:205px}.nav-actions .secondary{display:none}.intro{padding-top:32px}.intro h1{font-size:2.4rem}.editor-shell{gap:14px;padding-top:8px}.canvas-card{padding:10px;min-height:390px}.canvas-wrap{max-height:none}.panels{grid-template-columns:1fr}.panel:last-child{grid-column:auto}.panel>summary{padding:15px}.field-grid{grid-template-columns:1fr}.field-grid .full{grid-column:auto}.order-form{padding:18px}.order-section{padding:52px 0 90px}.canvas-toolbar{display:grid;grid-template-columns:repeat(3,1fr)}.canvas-toolbar .tool-btn{font-size:.75rem;padding:8px 5px}.status-strip{display:grid;grid-template-columns:1fr 1fr}.status-pill{font-size:.75rem}.button-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:360px){.brand{width:175px}.nav-actions .btn{padding:9px 11px;font-size:.78rem}.canvas-toolbar{grid-template-columns:1fr 1fr}.status-strip{grid-template-columns:1fr}}
 .text-small{display:block;margin-top:6px;color:#666;font-size:.78rem;font-weight:400}
+.custom-size-fields{margin-top:14px;padding:14px;border:1px solid #cfcfcf;background:#fafafa}
+.custom-size-fields[hidden]{display:none}
+.custom-size-hint{margin:10px 0 0;color:#666;font-size:.78rem}
 
 /* Redesign 2026 — aplikacyjny układ edytora */
 .intro{padding:30px 0 18px}
@@ -127,9 +130,8 @@
 .mockup-actions{position:sticky;bottom:0;z-index:5;display:grid;grid-template-columns:1fr 1fr 1.15fr;gap:12px;padding:16px 22px;border-top:1px solid #ddd;background:#fff}
 body.mockup-open{overflow:hidden}
 @media(max-width:820px){
-  .mockup-command{padding:8px!important;font-size:0!important;width:40px}
-  .mockup-command:before{content:"▣";font-size:1.1rem}
-  .mockup-dialog{width:100%;height:100%;max-height:none;margin:0}
+  .mockup-command{width:88px;max-width:88px;min-height:38px!important;padding:5px 7px!important;font-size:.63rem!important;line-height:1.15;text-align:center}
+  .mockup-dialog{position:fixed;inset:0;width:100vw;max-width:none;height:100dvh;max-height:100dvh;margin:0}
   .mockup-header{padding:13px 14px}
   .mockup-body{display:block;min-height:0}
   .fridge-stage{height:min(54vh,520px)}
