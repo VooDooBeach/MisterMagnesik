@@ -4,3 +4,97 @@
 @media(max-width:680px){.container{width:min(100% - 22px,1480px)}.editor-nav-inner{min-height:66px}.brand{width:205px}.nav-actions .secondary{display:none}.intro{padding-top:32px}.intro h1{font-size:2.4rem}.editor-shell{gap:14px;padding-top:8px}.canvas-card{padding:10px;min-height:390px}.canvas-wrap{max-height:none}.panels{grid-template-columns:1fr}.panel:last-child{grid-column:auto}.panel>summary{padding:15px}.field-grid{grid-template-columns:1fr}.field-grid .full{grid-column:auto}.order-form{padding:18px}.order-section{padding:52px 0 90px}.canvas-toolbar{display:grid;grid-template-columns:repeat(3,1fr)}.canvas-toolbar .tool-btn{font-size:.75rem;padding:8px 5px}.status-strip{display:grid;grid-template-columns:1fr 1fr}.status-pill{font-size:.75rem}.button-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:360px){.brand{width:175px}.nav-actions .btn{padding:9px 11px;font-size:.78rem}.canvas-toolbar{grid-template-columns:1fr 1fr}.status-strip{grid-template-columns:1fr}}
 .text-small{display:block;margin-top:6px;color:#666;font-size:.78rem;font-weight:400}
+
+/* Redesign 2026 — aplikacyjny układ edytora */
+.intro{padding:30px 0 18px}
+.intro .container{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:34px;align-items:end}
+.intro .eyebrow,.intro h1,.intro p{grid-column:1}
+.intro h1{font-size:clamp(2rem,3vw,3.8rem);margin:.22em 0 .12em}
+.intro p{margin:0}
+.intro .status-strip{grid-column:2;grid-row:1/4;max-width:430px;justify-content:flex-end;margin:0}
+.editor-shell{grid-template-columns:82px minmax(0,1fr) 330px;grid-template-rows:72px auto;gap:0;padding:0 0 76px;border:1px solid #d7d7d7;background:#fff;box-shadow:0 22px 65px rgba(0,0,0,.12);overflow:hidden}
+.app-command-bar{grid-column:1/-1;display:grid;grid-template-columns:260px 1fr auto;align-items:center;gap:24px;min-height:72px;padding:10px 18px;border-bottom:1px solid #dedede;background:#fff;position:relative;z-index:4}
+.app-logo{display:block;width:225px;color:#111}
+.app-logo svg{display:block;width:100%;height:auto}
+.project-title{display:grid;text-align:center;line-height:1.2}
+.project-title span{font-size:.7rem;color:#777;text-transform:uppercase;letter-spacing:.13em}
+.project-title strong{font-size:.82rem;margin-top:3px}
+.command-actions{display:flex;align-items:center;gap:8px}
+.icon-command{width:42px;height:42px;border:0;background:#fff;color:#111;font-size:1.5rem;display:grid;place-items:center;cursor:pointer}
+.icon-command:hover{background:#f2f2f2}
+.tool-rail{grid-column:1;grid-row:2;border-right:1px solid #dedede;background:#fff;display:flex;flex-direction:column;align-items:stretch;padding:10px 0;z-index:3}
+.rail-btn{border:0;border-left:3px solid transparent;background:#fff;color:#111;min-height:72px;padding:8px 4px;display:grid;place-items:center;align-content:center;gap:3px;cursor:pointer}
+.rail-btn span{font-size:1.35rem;line-height:1}
+.rail-btn small{font-size:.66rem;font-weight:700}
+.rail-btn:hover{background:#f5f5f5}
+.rail-btn.active{background:#f2f2f2;border-left-color:#111}
+.workspace{grid-column:2;grid-row:2;position:relative;top:auto;padding:24px;background:#f6f6f6;min-width:0}
+.canvas-card{min-height:610px;padding:34px;background:#f6f6f6;border:0;box-shadow:none}
+.canvas-wrap{max-height:68vh}
+.canvas-toolbar{width:max-content;max-width:100%;margin:14px auto 0;padding:7px;background:#fff;border:1px solid #ddd;box-shadow:0 8px 25px rgba(0,0,0,.10);justify-content:center}
+.canvas-toolbar .tool-btn{border:0;background:#fff;color:#111;min-height:38px;font-weight:700}
+.canvas-toolbar .tool-btn:hover{background:#f1f1f1;transform:none}
+.canvas-toolbar #preview-btn{background:#111;color:#fff}
+.panels{grid-column:3;grid-row:2;border-left:1px solid #dedede;background:#fff;display:block;min-height:100%;max-height:calc(100vh - 94px);overflow-y:auto}
+.panel{border:0;border-bottom:1px solid #e3e3e3}
+.panel>summary{padding:19px 18px;font-size:.92rem}
+.panel-body{padding:0 18px 22px}
+.panel:not([open]){display:none}
+.panel[open]>summary:after{content:"×";font-weight:400}
+.upload-zone{background:#fafafa}
+.range-line{grid-template-columns:1fr 42px}
+.range-line output{border:0;min-height:30px}
+.button-grid{grid-template-columns:1fr}
+.button-grid .tool-btn{min-height:42px}
+
+@media(max-width:1100px){
+  .intro .container{display:block}
+  .intro .status-strip{max-width:none;justify-content:flex-start;margin-top:18px}
+  .editor-shell{grid-template-columns:72px minmax(0,1fr) 300px}
+  .app-command-bar{grid-template-columns:210px 1fr auto}
+  .app-logo{width:190px}
+  .command-order{display:none}
+  .canvas-card{min-height:520px;padding:18px}
+}
+@media(max-width:820px){
+  body{padding-bottom:76px}
+  .editor-nav{display:none}
+  .intro{padding:22px 0 12px}
+  .intro h1{font-size:2.15rem}
+  .intro p{font-size:.92rem}
+  .intro .status-strip{display:none}
+  .editor-shell{width:100%;border-left:0;border-right:0;grid-template-columns:1fr;grid-template-rows:62px auto auto;box-shadow:none;overflow:visible}
+  .app-command-bar{grid-column:1;grid-row:1;position:sticky;top:0;grid-template-columns:42px 1fr auto;gap:8px;min-height:62px;padding:8px 10px;z-index:70}
+  .app-logo{width:34px;height:38px;overflow:hidden}
+  .app-logo svg{width:220px;max-width:none;height:38px}
+  .project-title{text-align:left;padding-left:4px}
+  .project-title span{display:none}
+  .project-title strong{font-size:.75rem}
+  .command-actions{gap:3px}
+  .command-actions .icon-command{width:34px;height:38px;font-size:1.25rem}
+  .command-actions .btn{min-height:38px;padding:8px 11px;font-size:.72rem}
+  .command-order{display:none}
+  .workspace{grid-column:1;grid-row:2;padding:12px 10px 18px}
+  .canvas-card{min-height:390px;padding:4px;background:#f6f6f6}
+  .canvas-toolbar{display:flex;width:100%;overflow-x:auto;justify-content:flex-start;margin-top:10px}
+  .canvas-toolbar .tool-btn{flex:0 0 auto;font-size:.7rem;padding:7px 10px}
+  .panels{position:fixed;z-index:85;left:0;right:0;bottom:calc(68px + env(safe-area-inset-bottom));grid-column:auto;grid-row:auto;min-height:0;max-height:min(58vh,520px);overflow-y:auto;border:0;border-top:1px solid #d0d0d0;background:#fff;box-shadow:0 -18px 42px rgba(0,0,0,.16)}
+  .panel{display:none!important;border-top:1px solid #ddd;border-bottom:0}
+  .panel[open]{display:block!important}
+  .panel>summary{padding:15px 16px}
+  .panel-body{padding:0 14px 22px}
+  .tool-rail{position:fixed;z-index:90;left:0;right:0;bottom:0;grid-column:auto;grid-row:auto;height:calc(68px + env(safe-area-inset-bottom));padding:0 4px env(safe-area-inset-bottom);border:0;border-top:1px solid #d2d2d2;display:grid;grid-template-columns:repeat(6,1fr);background:#fff}
+  .rail-btn{min-height:66px;border-left:0;border-top:3px solid transparent;padding:5px 1px}
+  .rail-btn.active{border-left:0;border-top-color:#111}
+  .rail-btn span{font-size:1.15rem}
+  .rail-btn small{font-size:.58rem}
+  .order-section{padding-bottom:110px}
+}
+@media(max-width:390px){
+  .intro h1{font-size:1.9rem}
+  .project-title{display:none}
+  .app-command-bar{grid-template-columns:34px 1fr}
+  .command-actions{justify-self:end}
+  .canvas-card{min-height:330px}
+  .rail-btn small{font-size:.54rem}
+}

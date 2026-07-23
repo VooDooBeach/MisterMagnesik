@@ -448,6 +448,28 @@
   }
 
   function bindEvents() {
+    const editorPanels = Array.from(document.querySelectorAll(".panels .panel"));
+    const railButtons = Array.from(document.querySelectorAll(".rail-btn[data-panel-index]"));
+    const activatePanel = (index) => {
+      editorPanels.forEach((panel, panelIndex) => { panel.open = panelIndex === index; });
+      railButtons.forEach((button, buttonIndex) => {
+        const active = buttonIndex === index;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", String(active));
+      });
+    };
+    railButtons.forEach((button) => button.addEventListener("click", () => activatePanel(Number(button.dataset.panelIndex))));
+    activatePanel(0);
+    $("command-undo-btn").addEventListener("click", () => $("undo-btn").click());
+    $("command-redo-btn").addEventListener("click", () => $("redo-btn").click());
+    $("command-save-btn").addEventListener("click", () => $("print-export-btn").click());
+    const statusProduct = $("status-product");
+    const commandProduct = $("command-product");
+    if (statusProduct && commandProduct) {
+      const syncCommandProduct = () => { commandProduct.textContent = statusProduct.textContent; };
+      new MutationObserver(syncCommandProduct).observe(statusProduct, { childList: true, subtree: true, characterData: true });
+      syncCommandProduct();
+    }
     $("shape-select").addEventListener("change", (e) => { shapeKey = e.target.value; sizeId = cfg.products[shapeKey].sizes[0].id; updateSizeOptions(); resizeCanvas(true); commitHistory(); checkImageQuality(); });
     $("size-select").addEventListener("change", (e) => { sizeId = e.target.value; updateSizeOptions(); resizeCanvas(true); commitHistory(); checkImageQuality(); });
     $("image-input").addEventListener("change", (e) => prepareUpload(e.target.files[0]));

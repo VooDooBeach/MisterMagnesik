@@ -22,6 +22,27 @@
 <header class="intro"><div class="container"><div class="eyebrow">Projektuj samodzielnie</div><h1>Edytor projektu magnesu</h1><p>Dodaj zdjęcie, tekst i dodatki. Projekt zapisuje się automatycznie na tym urządzeniu. Linie pomocnicze nie pojawią się w gotowym pliku.</p><div class="status-strip" aria-live="polite"><span class="status-pill"><strong id="status-product">Prostokąt 90 × 55 mm</strong></span><span class="status-pill" id="quality-pill"><strong id="status-quality">Dodaj zdjęcie</strong></span><span class="status-pill"><strong id="status-save">Projekt zapisany lokalnie</strong></span><span class="status-pill"><strong id="project-id-label">Projekt: —</strong></span></div></div></header>
 
 <div class="container editor-shell">
+  <div class="app-command-bar" aria-label="Pasek projektu">
+    <a class="app-logo" href="../" aria-label="Mister Magnesik — strona główna">
+      <svg viewBox="0 0 580 96" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="8"><path d="M8 78V14l39 28 39-28v64"/><path d="M22 43l25 18 25-18"/></g><path fill="currentColor" d="M4 84h12v8H4zm76 0h12v8H80zM108 8h2v78h-2z"/><text x="132" y="48" fill="currentColor" font-family="Arial" font-size="31" letter-spacing="8">MISTER MAGNESIK</text><text x="134" y="76" fill="currentColor" font-family="Arial" font-size="12" letter-spacing="5">MAGNESY, KTÓRE ZOSTAJĄ NA DŁUŻEJ</text></svg>
+    </a>
+    <div class="project-title"><span>Twój projekt</span><strong id="command-product">Prostokąt 90 × 55 mm</strong></div>
+    <div class="command-actions">
+      <button class="icon-command" id="command-undo-btn" type="button" aria-label="Cofnij" title="Cofnij">↶</button>
+      <button class="icon-command" id="command-redo-btn" type="button" aria-label="Ponów" title="Ponów">↷</button>
+      <button class="btn" id="command-save-btn" type="button">Zapisz projekt</button>
+      <a class="btn secondary command-order" href="#zamowienie">Zamów</a>
+    </div>
+  </div>
+
+  <nav class="tool-rail" aria-label="Narzędzia projektu">
+    <button class="rail-btn active" type="button" data-panel-index="0" aria-pressed="true"><span aria-hidden="true">＋</span><small>Rozmiar</small></button>
+    <button class="rail-btn" type="button" data-panel-index="1" aria-pressed="false"><span aria-hidden="true">▧</span><small>Zdjęcie</small></button>
+    <button class="rail-btn" type="button" data-panel-index="2" aria-pressed="false"><span aria-hidden="true">T</span><small>Tekst</small></button>
+    <button class="rail-btn" type="button" data-panel-index="3" aria-pressed="false"><span aria-hidden="true">□</span><small>Ramki</small></button>
+    <button class="rail-btn" type="button" data-panel-index="4" aria-pressed="false"><span aria-hidden="true">⌖</span><small>Linie</small></button>
+    <button class="rail-btn" type="button" data-panel-index="5" aria-pressed="false"><span aria-hidden="true">↓</span><small>Eksport</small></button>
+  </nav>
   <section class="workspace" aria-label="Obszar projektu">
     <div class="canvas-card"><div class="canvas-wrap" id="canvas-wrap"><canvas id="design-canvas" width="760" height="500" aria-label="Edytowalny projekt magnesu"></canvas><div class="drop-hint">Upuść zdjęcie tutaj</div></div></div>
     <div class="canvas-toolbar" aria-label="Historia i zaznaczenie"><button class="tool-btn secondary" id="undo-btn" type="button">Cofnij</button><button class="tool-btn secondary" id="redo-btn" type="button">Ponów</button><button class="tool-btn secondary" id="delete-btn" type="button">Usuń</button><button class="tool-btn secondary" id="center-btn" type="button">Wyśrodkuj</button><button class="tool-btn secondary" id="reset-btn" type="button">Nowy projekt</button><button class="tool-btn" id="preview-btn" type="button">Pobierz podgląd</button></div>
