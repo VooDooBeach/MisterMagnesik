@@ -221,3 +221,27 @@ footer{padding:35px 0;border-top:1px solid var(--line);font-size:13px;color:#666
   .hero .trust>div b{font-size:14px;line-height:1.25}
   .production-details{align-items:stretch}
 }
+
+
+/* MOBILE-HERO-WIDTH-FIX */
+@media(max-width:560px){
+  .hero-grid{min-width:0}
+  .hero-grid>div,
+  .hero-media{
+    width:100%;
+    max-width:100%;
+    min-width:0;
+    box-sizing:border-box;
+  }
+  .hero .trust{
+    width:100%;
+    max-width:100%;
+    min-width:0;
+  }
+  .hero-media img{
+    display:block;
+    width:100%;
+    max-width:100%;
+    height:auto;
+  }
+}
