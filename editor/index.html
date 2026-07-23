@@ -7,7 +7,7 @@
   <title>Edytor projektu magnesu | Mister Magnesik</title>
   <meta name="description" content="Przygotuj własny projekt magnesu ze zdjęcia i tekstu. Sprawdź jakość oraz pobierz plik gotowy do druku.">
   <link rel="icon" href="../assets/favicon.png">
-  <link rel="stylesheet" href="editor.css">
+  <link rel="stylesheet" href="editor.css?v=20260723-2">
 </head>
 <body>
 <a class="skip-link" href="#main-content">Przejdź do edytora</a>
@@ -30,6 +30,7 @@
     <div class="command-actions">
       <button class="icon-command" id="command-undo-btn" type="button" aria-label="Cofnij" title="Cofnij">↶</button>
       <button class="icon-command" id="command-redo-btn" type="button" aria-label="Ponów" title="Ponów">↷</button>
+      <button class="btn secondary mockup-command" id="mockup-open-btn" type="button">Podgląd na lodówce</button>
       <button class="btn" id="command-save-btn" type="button">Zapisz projekt</button>
       <a class="btn secondary command-order" href="#zamowienie">Zamów</a>
     </div>
@@ -58,9 +59,37 @@
   </aside>
 </div>
 
+<dialog class="mockup-dialog" id="mockup-dialog" aria-labelledby="mockup-title">
+  <div class="mockup-header">
+    <div><div class="eyebrow">Podgląd produktu</div><h2 id="mockup-title">Podgląd na lodówce</h2></div>
+    <button class="mockup-close" id="mockup-close-btn" type="button" aria-label="Zamknij podgląd">×</button>
+  </div>
+  <div class="mockup-body">
+    <div class="fridge-stage" id="fridge-stage">
+      <img class="fridge-image" id="fridge-image" src="mockup-fridge.webp" width="1456" height="1094" alt="Biała lodówka do podglądu projektu">
+      <img class="magnet-preview" id="magnet-preview" alt="Twój projekt magnesu na lodówce" draggable="false">
+    </div>
+    <aside class="mockup-controls" aria-label="Ustawienia podglądu">
+      <p class="mockup-format"><span>Format</span><strong id="mockup-format-label">90 × 55 mm</strong></p>
+      <label class="mockup-range">Powiększenie widoku <output id="mockup-scale-output">100%</output><input id="mockup-scale" type="range" min="75" max="130" value="100" step="5"></label>
+      <div class="mockup-position"><strong>Położenie</strong><p>Przeciągnij magnes po drzwiach lodówki.</p></div>
+      <div class="mockup-switch" role="group" aria-label="Rodzaj podglądu">
+        <button id="mockup-plain-btn" type="button">Sam magnes</button>
+        <button class="active" id="mockup-fridge-btn" type="button">Na lodówce</button>
+      </div>
+      <p class="mockup-note">Podgląd zachowuje przybliżone proporcje rzeczywistego formatu. Suwak powiększa jedynie widok.</p>
+    </aside>
+  </div>
+  <div class="mockup-actions">
+    <button class="btn secondary" id="mockup-back-btn" type="button">Wróć do edycji</button>
+    <button class="btn secondary" id="mockup-download-btn" type="button">Pobierz mockup JPG</button>
+    <a class="btn" id="mockup-order-btn" href="#zamowienie">Zamów ten projekt</a>
+  </div>
+</dialog>
+
 <section class="order-section" id="zamowienie"><div class="container order-grid"><div><div class="eyebrow">Gotowy projekt</div><h2>Zamów i przekaż projekt</h2><p>Uzupełnij dane, a projekt przygotowany w edytorze zostanie automatycznie dołączony do wiadomości. Możesz również dodać własne zdjęcie, grafikę albo dodatkowy plik.</p><div id="order-summary"></div></div><form class="order-form" id="order-form" enctype="multipart/form-data"><input type="hidden" name="_subject" value="Nowy projekt z edytora Mister Magnesik"><input type="hidden" name="_template" value="table"><input class="sr-only" type="text" name="_honey" tabindex="-1" autocomplete="off"><div class="field-grid"><label>Imię i nazwisko<input name="name" autocomplete="name" required></label><label>E-mail<input name="email" type="email" autocomplete="email" required></label><label>Telefon<input name="phone" type="tel" autocomplete="tel"></label><label>Liczba sztuk<input name="quantity" type="number" min="1" value="1" required></label><label class="full">Dodatkowe zdjęcie lub plik — opcjonalnie<input id="order-attachment" name="attachment" type="file" accept="image/jpeg,image/png,image/webp,application/pdf"><span class="text-small">JPG, PNG, WebP lub PDF. Projekt z edytora zostanie dołączony automatycznie. Łączny limit załączników: 10 MB.</span></label><label class="full">Uwagi<textarea name="notes" rows="4"></textarea></label><label class="full consent"><input name="consent" type="checkbox" required><span>Zgadzam się na przetwarzanie danych w celu obsługi zamówienia i akceptuję <a href="../polityka-prywatnosci.html">politykę prywatności</a>.</span></label><div class="full"><button class="btn" type="submit">Zamawiam i wysyłam projekt</button><p class="form-status" id="order-status" role="status" aria-live="polite"></p></div></div></form></div></section>
 </main>
 <footer class="footer"><div class="container footer-inner"><span>© 2026 Mister Magnesik</span><span><a href="../">Strona główna</a> · <a href="../realizacje/">Realizacje</a> · <a href="../faq/">FAQ</a></span></div></footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="config.js"></script><script src="integration.config.js?v=20260721-4"></script><script src="editor.js?v=20260721-6"></script>
+<script src="config.js"></script><script src="integration.config.js?v=20260721-4"></script><script src="editor.js?v=20260723-2"></script>
 </body></html>

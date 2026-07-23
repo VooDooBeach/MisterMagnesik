@@ -447,6 +447,79 @@
     canvas.getObjects().forEach((obj) => canvas.remove(obj)); photoObject = null; frameObject = null; localStorage.removeItem(cfg.autosaveKey); rebuildGuides(); commitHistory(); resetPhotoControls(); checkImageQuality();
   }
 
+  let mockupPosition = { x: .5, y: .35 };
+  let mockupZoom = 1;
+  let mockupDragging = false;
+
+  function updateMockupSize() {
+    const stage = $("fridge-stage");
+    const preview = $("magnet-preview");
+    if (!stage || !preview) return;
+    const doorWidth = stage.clientWidth * .255;
+    const productWidth = doorWidth * (currentSize.widthMm / 600);
+    preview.style.width = `${Math.max(18, productWidth * mockupZoom)}px`;
+    preview.style.aspectRatio = `${currentSize.widthMm} / ${currentSize.heightMm}`;
+    preview.style.left = `${mockupPosition.x * 100}%`;
+    preview.style.top = `${mockupPosition.y * 100}%`;
+    $("mockup-format-label").textContent = currentSize.label;
+    $("mockup-scale-output").textContent = `${Math.round(mockupZoom * 100)}%`;
+  }
+
+  function openMockup() {
+    const dialog = $("mockup-dialog");
+    $("magnet-preview").src = renderDataUrl("preview");
+    mockupPosition = { x: .5, y: .35 };
+    mockupZoom = 1;
+    $("mockup-scale").value = "100";
+    $("fridge-stage").classList.remove("plain-view");
+    $("mockup-fridge-btn").classList.add("active");
+    $("mockup-plain-btn").classList.remove("active");
+    dialog.showModal();
+    document.body.classList.add("mockup-open");
+    requestAnimationFrame(updateMockupSize);
+  }
+
+  function closeMockup() {
+    const dialog = $("mockup-dialog");
+    if (dialog.open) dialog.close();
+    document.body.classList.remove("mockup-open");
+  }
+
+  function moveMockupMagnet(event) {
+    if (!mockupDragging || $("fridge-stage").classList.contains("plain-view")) return;
+    const rect = $("fridge-stage").getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width;
+    const y = (event.clientY - rect.top) / rect.height;
+    mockupPosition.x = Math.max(.385, Math.min(.615, x));
+    mockupPosition.y = Math.max(.18, Math.min(.59, y));
+    updateMockupSize();
+  }
+
+  async function downloadMockup() {
+    const fridge = $("fridge-image");
+    if (!fridge.complete) await new Promise((resolve) => fridge.addEventListener("load", resolve, { once: true }));
+    const output = document.createElement("canvas");
+    output.width = fridge.naturalWidth;
+    output.height = fridge.naturalHeight;
+    const ctx = output.getContext("2d");
+    ctx.drawImage(fridge, 0, 0, output.width, output.height);
+    const design = new Image();
+    design.src = renderDataUrl("preview");
+    await new Promise((resolve, reject) => { design.onload = resolve; design.onerror = reject; });
+    const doorWidth = output.width * .255;
+    const width = doorWidth * (currentSize.widthMm / 600) * mockupZoom;
+    const height = width * (currentSize.heightMm / currentSize.widthMm);
+    const x = output.width * mockupPosition.x - width / 2;
+    const y = output.height * mockupPosition.y - height / 2;
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,.24)";
+    ctx.shadowBlur = Math.max(3, output.width * .004);
+    ctx.shadowOffsetY = Math.max(2, output.width * .002);
+    ctx.drawImage(design, x, y, width, height);
+    ctx.restore();
+    downloadDataUrl(output.toDataURL("image/jpeg", .9), `${projectId}-mockup-lodowka.jpg`);
+  }
+
   function bindEvents() {
     const editorPanels = Array.from(document.querySelectorAll(".panels .panel"));
     const railButtons = Array.from(document.querySelectorAll(".rail-btn[data-panel-index]"));
@@ -463,6 +536,33 @@
     $("command-undo-btn").addEventListener("click", () => $("undo-btn").click());
     $("command-redo-btn").addEventListener("click", () => $("redo-btn").click());
     $("command-save-btn").addEventListener("click", () => $("print-export-btn").click());
+    $("mockup-open-btn").addEventListener("click", openMockup);
+    $("mockup-close-btn").addEventListener("click", closeMockup);
+    $("mockup-back-btn").addEventListener("click", closeMockup);
+    $("mockup-order-btn").addEventListener("click", closeMockup);
+    $("mockup-download-btn").addEventListener("click", downloadMockup);
+    $("mockup-scale").addEventListener("input", (event) => { mockupZoom = Number(event.target.value) / 100; updateMockupSize(); });
+    $("mockup-plain-btn").addEventListener("click", () => {
+      $("fridge-stage").classList.add("plain-view");
+      $("mockup-plain-btn").classList.add("active");
+      $("mockup-fridge-btn").classList.remove("active");
+    });
+    $("mockup-fridge-btn").addEventListener("click", () => {
+      $("fridge-stage").classList.remove("plain-view");
+      $("mockup-fridge-btn").classList.add("active");
+      $("mockup-plain-btn").classList.remove("active");
+      updateMockupSize();
+    });
+    $("magnet-preview").addEventListener("pointerdown", (event) => {
+      if ($("fridge-stage").classList.contains("plain-view")) return;
+      mockupDragging = true;
+      event.currentTarget.setPointerCapture(event.pointerId);
+    });
+    $("magnet-preview").addEventListener("pointermove", moveMockupMagnet);
+    $("magnet-preview").addEventListener("pointerup", () => { mockupDragging = false; });
+    $("magnet-preview").addEventListener("pointercancel", () => { mockupDragging = false; });
+    $("mockup-dialog").addEventListener("cancel", () => document.body.classList.remove("mockup-open"));
+    $("mockup-dialog").addEventListener("click", (event) => { if (event.target === $("mockup-dialog")) closeMockup(); });
     const statusProduct = $("status-product");
     const commandProduct = $("command-product");
     if (statusProduct && commandProduct) {
